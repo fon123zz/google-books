@@ -1,0 +1,49 @@
+<%- include('partials/head') %>
+
+<% if(resposta.totalItems > 0) { %>
+    <h2>Livros encontrados</h2>
+
+    <% for(item of resposta.items) {
+        const identificador = item.id
+        const livro = item.volumeInfo
+        let autores = ""
+        if (livro.authors) {
+            for (let i = 0; i < livro.authors.length; i++){
+                autores += livro.authors[i]
+                if(i < livro.authors.length - 1){
+                    autores += ", "
+                } else {
+                    autores += '.'
+                }
+            }
+        }
+    
+    %>
+    <div class="livro">
+        <form action="/insert" method="post">
+            <img src="<%= livro.imageLinks ? livro.imageLinks.thumbnail : 'imgs/transparent.png' %>" alt="">
+            <p>Título: <input name="titulo" type="text" value="<%= livro.title %>" readonly></p>
+            <p>Autores: <%= autores %></p>
+            <div>
+                <% if(livro.industryIdentifiers) {
+                    for(isbn of livro.industryIdentifiers) { %>
+                    <p><%= isbn.type %>: <%= isbn.identifier %>.</p>
+                    <% }
+                } %>    
+            </div>
+            <p><input id="none" name="identificador" type="text" value="<%= identificador %>" readonly></p>
+            <div class="button">
+                <button>Adicionar à minha lista</button>
+            </div>
+        </form>
+
+    </div>
+
+
+<% } %>
+<% } else { %>
+    <h2>Nenhum livro encontrado</h2>
+<% } %>
+<a href="/"><p id="voltar">Voltar</p></a>
+
+<%- include('partials/footer') %>

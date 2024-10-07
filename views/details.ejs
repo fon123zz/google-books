@@ -1,0 +1,76 @@
+<%- include('partials/head') %>
+
+<%  const livro = resposta.volumeInfo
+    let autores = ""
+    if (livro.authors) {
+        for (let i = 0; i < livro.authors.length; i++){
+            autores += livro.authors[i]
+            if(i < livro.authors.length - 1){
+                autores += ", "
+            } else {
+                autores += '.'
+            }
+        }
+    }
+%>
+<h2>Detalhes do Livro</h2>
+<div class="livro">
+    <form id="editForm" action="/delete/<%= bd._id %>?_method=DELETE" method="post">
+        <img src="<%= livro.imageLinks ? livro.imageLinks.thumbnail : 'imgs/transparent.png' %>" alt="">
+        <p>Título: <%= livro.title %></p>
+        <p>Autores: <%= autores %></p>
+        <div>
+            <% if(livro.industryIdentifiers) {
+                for(isbn of livro.industryIdentifiers) { %>
+                <p><%= isbn.type %>: <%= isbn.identifier %></p>
+                <% }
+            } %>    
+        </div>
+        <p>Comentário: <input id="comentario" type="text" name="comentario" value="<%= bd.comentario %>" readonly></p>
+        <div class="btnDetalhes">
+            <button id="editButton" type="button" onclick="editComment()">Editar comentário</button>
+            <button id="deleteButton" type="submit">Remover da minha lista</button>
+        </div>
+    </form>
+</div>
+
+<%- include('partials/footer') %>
+
+<script>
+    function editComment() {
+        let comentario = document.getElementById('comentario');
+        let editButton = document.getElementById('editButton');
+        let deleteButton = document.getElementById('deleteButton')
+        let editForm = document.getElementById('editForm');
+
+        if (editButton.textContent === 'Editar comentário') {
+            comentario.removeAttribute('readonly');
+            comentario.focus();
+
+            editButton.textContent = 'Cancelar';
+            editButton.id = 'cancelButton';
+            editButton.onclick = cancelEdit;
+
+            deleteButton.textContent = 'Salvar alterações';
+            
+            editForm.action = '/details/<%= bd._id %>?_method=PATCH';
+        }
+    }
+
+    function cancelEdit() {
+        let comentario = document.getElementById('comentario');
+        let editButton = document.getElementById('cancelButton');
+        let deleteButton = document.getElementById('deleteButton')
+
+        comentario.setAttribute('readonly', true);
+        comentario.value = '<%= bd.comentario %>';
+        
+        editButton.textContent = 'Editar comentário';
+        editButton.id = 'editButton';
+        editButton.onclick = editComment;
+
+        deleteButton.textContent = 'Remover da minha lista';
+
+        editForm.action = '/delete/<%= bd._id %>?_method=DELETE';
+    }
+</script>

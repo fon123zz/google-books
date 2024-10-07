@@ -1,0 +1,13 @@
+<%- include('partials/head') %>
+
+<h2>Meus Livros</h2>
+
+<div class="lista">
+    <% for(livro of livros) { %>
+        <li><a href="/details/<%= livro.identificador %>"><%= livro.titulo %></a></li>
+    <% } %>
+</div>
+
+<a href="/"><p id="voltar">Voltar</p></a>
+
+<%- include('partials/footer') %>
